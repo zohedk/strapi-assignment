@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - my-db:/var/lib/postgresql/data
+
+  backend:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: backend-prod
+    environment:
+      HOST: 0.0.0.0
+      PORT: 1337 
+      APP_KEYS: bWI4M+UXLxH+OWQ4TGAUqQ==,uP5p0toSKFz6fmOUg6mMfw==,tmBkkyH/D1shtCwpBjdQmA==,v8ys0UV7TwtWFlpGnT6Lcg==
+      API_TOKEN_SALT: CH8o5P0bv0KLspsX/qv2nA== 
+      ADMIN_JWT_SECRET: WqbGC6YUkaJjujek4+cJuw==
+      TRANSFER_TOKEN_SALT: UIuPMy3br+IzjZPzVxJb5g==
+      # database
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: aws-0-ap-south-1.pooler.supabase.com
+      DATABASE_PORT: 6543
+      DATABASE_NAME: postgres
+      DATABASE_USERNAME: postgres.pazhkmdifyqdhwjdkhei
+      DATABASE_PASSWORD: oi8vVFZDbTmuMxCx
+      DATABASE_SSL: false
+      JWT_SECRET: mlsGcuu/sg0+FqDUbDw8+w==
+    ports:
+      - 1337:1337
+    volumes:
+      - ./src/api:/app/src/api
+    restart: always
+
+volumes:
+  my-db:
+    driver: local
